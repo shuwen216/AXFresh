@@ -1,0 +1,106 @@
+{% extends 'base_main.html' %}
+{% load static %}
+{% block ext_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'axf/main/css/market.css' %}">
+{% endblock %}
+
+{% block ext_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'axf/main/js/market.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <aside>
+            <ul>
+                {% for foodtype in foodtypes %}
+                    <li>
+                        <a href="{% url 'axf:market_with_params' typeid=foodtype.typeid childcid=0 order_rule=0 %}">{{ foodtype.typename }}</a>
+                        {# if the current foodtype listed out is equal to typeid from params #}
+                        {% ifequal foodtype.typeid typeid_from_views %}
+                            <span class="yellowSlide"></span>
+                        {% endifequal %}
+
+                    </li>
+                {% endfor %}
+            </ul>
+        </aside>
+
+        <section>
+            <nav>
+                <ul>
+                    <li id="all_categories"><span>All Categories <span class="glyphicon glyphicon-chevron-down"></span></span></li>
+                    <li id="sort_by"><span>Sort By <span class="glyphicon glyphicon-chevron-down"></span></span></li>
+                </ul>
+            </nav>
+
+            <menu>
+                <ul>
+                    {% for goods in goods_list %}
+                        <li>
+                            <a href="#">
+                                <img src="{{ goods.productimg }}" alt="{{ goods.productlongname }}">
+                                <div class="shoppingInfo">
+                                    <h6>{{ goods.productlongname }}</h6>
+                                    <p class="detailTag">
+                                        <span>Editor's Pick</span>
+                                        <span></span>
+                                    </p>
+                                    <p class="unit">{{ goods.specifics }}</p>
+                                    <p class="price">
+                                        <span>{{ goods.price }}</span>
+                                        <s>{{ goods.marketprice }}</s>
+                                    </p>
+                                </div>
+                            </a>
+
+                            <section>
+                                <button goodsid = "{{ goods.id }}" class="subShopping">-</button>
+                                <span>0</span>
+                                {# button goodsid is for js, get by attr() #}
+                                <button goodsid = "{{ goods.id }}" class="addShopping">+</button>
+                            </section>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {# Show for all categories from top menu #}
+                {# div_id is used in market.js #}
+                <div id="all_categories_container">
+                    <div>
+                        {% for foodtype_childname in foodtype_childname_list %}
+
+                            {% ifequal foodtype_childname.1 childcid_from_views %}
+                                <a href="{% url 'axf:market_with_params' typeid=typeid_from_views childcid=foodtype_childname.1 order_rule=0 %}">
+                                    <button class="btn btn-success">{{ foodtype_childname.0 }}</button>
+                               </a>
+                            {% else %}
+                                <a href="{% url 'axf:market_with_params' typeid=typeid_from_views childcid=foodtype_childname.1 order_rule=0  %}">
+                                    <button class="btn btn-default ">{{ foodtype_childname.0 }}</button>
+                               </a>
+                            {% endifequal %}
+
+                        {% endfor %}
+                    </div>
+                </div>
+                {# Show for sorted by from top menu #}
+                <div id="sort_by_container">
+                    <div>
+                        {% for order_rule in order_rule_list %}
+                            {% ifequal order_rule.1 order_rule_from_views %}
+                                <a href="{% url 'axf:market_with_params' typeid=typeid_from_views childcid=childcid_from_views order_rule=order_rule.1 %}">
+                                    <button class="btn btn-success">{{ order_rule.0 }}</button>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'axf:market_with_params' typeid=typeid_from_views childcid=childcid_from_views order_rule=order_rule.1 %}">
+                                    <button class="btn btn-default">{{ order_rule.0 }}</button>
+                                </a>
+                            {% endifequal %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </menu>
+        </section>
+
+    </div>
+{% endblock %}

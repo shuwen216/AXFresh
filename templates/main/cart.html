@@ -1,0 +1,95 @@
+{% extends 'base_main.html' %}
+{% load static %}
+{% block ext_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'axf/main/css/cart.css' %}">
+{% endblock %}
+
+{% block ext_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'axf/main/js/cart.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="cart">
+        <h3>Cart</h3>
+        <div class="full">
+            <section>
+                <ul>
+                    <li>Ships To:Shuwen</li>
+                    <li>Phone Number:(310)500-9304</li>
+                    <li>Shipping Address: Regional Cmn</li>
+                </ul>
+
+                <div class="bill">
+                    <p>Flash Sale</p>
+                    <p>Free Shipping on Order over $50</p>
+                    <a href="#">You may also consider these</a>
+                </div>
+
+                <div class="delivery">
+                    <span>Delivery Date</span>
+                    <span>Delivered in 1 hr</span>
+                    <a href="#">Preorder&gt;</a>
+
+                </div>
+
+                <div class="delivery">
+                    <span>Deliver Instruction</span>
+                    <input type="text" placeholder="less than 200 characters">
+                </div>
+
+                <ul>
+                    {% for cart in carts %}
+                        <li class="menuList" cartid="{{ cart.id }}">
+                            <div class="confirm">
+                                <span>
+                                    {% if cart.c_is_selected %}
+                                        <span>✓</span>
+                                    {% else %}
+                                        <span></span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <a href="#">
+                                <img src="{{ cart.c_goods.productimg }}" alt="{{ cart.c_goods.productlongname }}">
+                                <p>{{ cart.c_goods.productlongname }}</p>
+                                <p class="presentPrice">{{ cart.c_goods.price }}</p>
+                            </a>
+
+                            <section>
+                                <button class="subShopping">-</button>
+                                <span>{{ cart.c_goods_num }}</span>
+                                <button class="addShopping">+</button>
+                            </section>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+
+                <div class="payTheBill">
+                    <div class="select_all">
+                        <span>
+                            {% if is_select_all %}
+                                <span>✓</span>
+                            {% else %}
+                                <span></span>
+                            {% endif %}
+                            <span></span>
+                        </span>
+                    </div>
+
+                    <p>
+                        <span>Select All</span>
+                        <span>Total:</span>
+                        <span id="total_price">{{ total_price }}</span>
+                    </p>
+
+                    <span id="create_order">Pay</span>
+                </div>
+
+            </section>
+
+        </div>
+    </div>
+{% endblock %}

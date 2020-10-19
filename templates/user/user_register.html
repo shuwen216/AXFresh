@@ -1,0 +1,49 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block ext_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'axf/user/css/register.css' %}">
+{% endblock %}
+
+{% block ext_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'axf/user/js/register.js'%}"></script>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <form method="post" enctype="multipart/form-data" action="{% url 'axf:register' %}" onsubmit="return check()">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username_input">Username</label>
+                <input name="username" type="text" class="form-control" id="username_input" placeholder="Enter Username Here">
+                <span id="username_check"></span> {# js checks if alreay exists #}
+            </div>
+            <div class="form-group">
+                <label for="email_input">Email</label>
+                <input name="email" type="email" class="form-control" id="email_input" placeholder="Enter Email Here">
+                <span id="email_check"></span>
+            </div>
+            <div class="form-group">
+                <label for="password_input">Password</label>
+                <input name="password" type="password" class="form-control" id="password_input" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="password_confirm_input">Confirm Your Password</label>
+                <input type="password" class="form-control" id="password_confirm_input" placeholder="Password">
+                <span id="passwd_check"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="icon_input">Profile Picture</label>
+                <input name="icon" type="file" id="icon_input">
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block">Register</button>
+        </form>
+    </div>
+{% endblock %}

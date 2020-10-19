@@ -1,0 +1,94 @@
+{% extends 'base_order.html' %}
+{% load static %}
+
+{% block ext_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'axf/order/css/order_detail.css' %}">
+{% endblock %}
+
+{% block ext_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'axf/order/js/order_detail.js' %}"></script>
+{% endblock %}
+
+<!DOCTYPE html>
+
+{% block content %}
+    <div id="order_detail" class="container">
+
+        <h6>Order Number: {{ order.id }}</h6>
+
+
+        <ul>
+            {% for ordergoods in order.ordergoods_set.all %}
+                <li class="menuList">
+
+                    <a href="#">
+                        <img src="{{ ordergoods.o_goods.productimg }}" alt="{{ ordergoods.o_goods.productlongname }}">
+                        <p>{{ ordergoods.o_goods.productlongname }}</p>
+                        <p class="presentPrice">{{ ordergoods.o_goods.price }}</p>
+                    </a>
+
+                    <section>
+
+                        <span>{{ ordergoods.o_goods_num }}</span>
+
+                    </section>
+                </li>
+            {% endfor %}
+
+        </ul>
+
+        <h6 class="total_price">Total: <span id="total_price">{{ order.o_price }}</span></h6>
+
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <!-- Ensures optimal rendering on mobile devices. -->
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/> <!-- Optimal Internet Explorer compatibility -->
+        </head>
+
+        <body>
+        <script
+                src="https://www.paypal.com/sdk/js?client-id=AQhmiJx4prLV2BbSfIx17acEmxGmyJt5hb8WmlH9807YGSzIC5QtovKc6ZqSBusNSdoIzY2DfWZLCjrR"> // Required. Replace SB_CLIENT_ID with your sandbox client ID.
+        </script>
+        </body>
+        {# <button orderid="{{ order.id }}" id="alipay" class="btn btn-success btn-block">Pay</button> #}
+        <body>
+        <script
+                src="https://www.paypal.com/sdk/js?client-id=AQhmiJx4prLV2BbSfIx17acEmxGmyJt5hb8WmlH9807YGSzIC5QtovKc6ZqSBusNSdoIzY2DfWZLCjrR"> // Required. Replace SB_CLIENT_ID with your sandbox client ID.
+        </script>
+
+        <div id="paypal-button-container"></div>
+
+        </body>
+        <script>
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    // This function sets up the details of the transaction, including the amount and line item details.
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: "{{ order.o_price }}"
+                            }
+                        }]
+                    });
+                },
+                onApprove: function (data, actions) {
+                    // This function captures the funds from the transaction.
+                    return actions.order.capture().then(function (details) {
+                        // This function shows a transaction success message to your buyer.
+                        alert('Transaction completed by ' + details.payer.name.given_name);
+                        var orderid = {{ order.id }};
+                        $.getJSON("/axf/paid/", {"orderid": orderid}, function (data) {
+                            if (data["status"] === 200) {
+                                window.open("/axf/mine/", target = '_self');
+                            }
+                        })
+                    });
+                }
+            }).render('#paypal-button-container');
+        </script>
+
+        {#      <script src="https://www.paypal.com/sdk/js?client-id=sb"></script> <script>paypal.Buttons().render('body');</script> #}
+    </div>
+{% endblock %}
